@@ -9,7 +9,7 @@ let package = Package(
 
     platforms: [
         .macOS("13.3"),
-        .iOS(.v16),
+        .iOS(.v15),
         .visionOS(.v1),
     ],
 

@@ -53,7 +53,11 @@ extension MLXArray {
 
     func leadingSingletonDimensionsRemoved(stream: StreamOrDevice = .default) -> MLXArray {
         let shape = self.shape.asInt32
-        let newShape = Array(shape.trimmingPrefix { $0 == 1 })
+        let newShape: [Int32] = if #available(iOS 16.0, macCatalyst 16.0, *) {
+            Array(shape.trimmingPrefix { $0 == 1 })
+        } else {
+            Array()
+        }
         if shape != newShape {
             return self.reshaped(newShape.isEmpty ? [1] : newShape, stream: stream)
         } else {
@@ -108,7 +112,11 @@ extension MLXArray {
         case let r as PartialRangeFrom<Int>:
             return (resolve(r.lowerBound, axis), dim(axis).int32)
         default:
-            fatalError("Unable to handle rangeExpression: \(rangeExpression)")
+            if #available(iOS 16.0, macCatalyst 16.0.0, *) {
+                fatalError("Unable to handle rangeExpression: \(rangeExpression)")
+            } else {
+                fatalError()
+            }
         }
     }
 

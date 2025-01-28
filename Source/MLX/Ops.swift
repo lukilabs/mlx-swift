@@ -1561,7 +1561,12 @@ extension LoadSaveError: LocalizedError {
 /// - ``save(arrays:metadata:url:stream:)``
 public func loadArray(url: URL, stream: StreamOrDevice = .default) throws -> MLXArray {
     precondition(url.isFileURL)
-    let path = url.path(percentEncoded: false)
+    let path = if #available(iOS 16.0, macCatalyst 16.0, *) {
+        url.path(percentEncoded: false)
+    } else {
+        // Fallback to just `url.path` on iOS 15 or earlier
+        url.path
+    }
 
     switch url.pathExtension {
     case "npy":
@@ -1587,7 +1592,11 @@ public func loadArray(url: URL, stream: StreamOrDevice = .default) throws -> MLX
 /// - ``save(arrays:metadata:url:stream:)``
 public func loadArrays(url: URL, stream: StreamOrDevice = .default) throws -> [String: MLXArray] {
     precondition(url.isFileURL)
-    let path = url.path(percentEncoded: false)
+    let path = if #available(iOS 16.0, macCatalyst 16.0, *) {
+        url.path(percentEncoded: false)
+    } else {
+        url.path
+    }
 
     switch url.pathExtension {
     case "safetensors":
@@ -1617,7 +1626,11 @@ public func loadArraysAndMetadata(url: URL, stream: StreamOrDevice = .default) t
     [String: MLXArray], [String: String]
 ) {
     precondition(url.isFileURL)
-    let path = url.path(percentEncoded: false)
+    let path = if #available(iOS 16.0, macCatalyst 16.0, *) {
+        url.path(percentEncoded: false)
+    } else {
+        url.path
+    }
 
     switch url.pathExtension {
     case "safetensors":
@@ -2214,7 +2227,11 @@ public func remainder<A: ScalarOrArray, B: ScalarOrArray>(
 /// - ``loadArrays(url:stream:)``
 public func save(array: MLXArray, url: URL, stream: StreamOrDevice = .default) throws {
     precondition(url.isFileURL)
-    let path = url.path(percentEncoded: false)
+    let path = if #available(iOS 16.0, macCatalyst 16.0, *) {
+        url.path(percentEncoded: false)
+    } else {
+        url.path
+    }
     if let fp = fopen(path, "w") {
         defer { fclose(fp) }
 
@@ -2248,7 +2265,11 @@ public func save(
     stream: StreamOrDevice = .default
 ) throws {
     precondition(url.isFileURL)
-    let path = url.path(percentEncoded: false)
+    let path = if #available(iOS 16.0, macCatalyst 16.0, *) {
+        url.path(percentEncoded: false)
+    } else {
+        url.path
+    }
 
     let mlx_arrays = new_mlx_array_map(arrays)
     defer { mlx_map_string_to_array_free(mlx_arrays) }

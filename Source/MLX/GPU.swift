@@ -268,7 +268,11 @@ public enum GPU {
     /// See [the documentation](https://ml-explore.github.io/mlx/build/html/dev/metal_debugger.html)
     /// for more information.
     public static func startCapture(url: URL) {
-        mlx_metal_start_capture(url.path().cString(using: .utf8))
+        if #available(iOS 16.0, macCatalyst 16.0, *) {
+            mlx_metal_start_capture(url.path().cString(using: .utf8))
+        } else {
+            // Fallback on earlier versions
+        }
     }
 
     /// Stop the metal capture.
@@ -307,10 +311,17 @@ public enum GPU {
                 architecture = device.name
             }
 
-            return DeviceInfo(
-                architecture: architecture, maxBufferSize: device.maxBufferLength,
-                maxRecommendedWorkingSetSize: device.recommendedMaxWorkingSetSize,
-                memorySize: memSize)
+            if #available(iOS 16.0, macCatalyst 16.0, *) {
+                return DeviceInfo(
+                    architecture: architecture, maxBufferSize: device.maxBufferLength,
+                    maxRecommendedWorkingSetSize: device.recommendedMaxWorkingSetSize,
+                    memorySize: memSize)
+            } else {
+                return DeviceInfo(
+                    architecture: architecture, maxBufferSize: device.maxBufferLength,
+                    maxRecommendedWorkingSetSize: 12,
+                    memorySize: memSize)
+            }
         } else {
             return DeviceInfo(
                 architecture: "Unknown", maxBufferSize: 0, maxRecommendedWorkingSetSize: 0,
