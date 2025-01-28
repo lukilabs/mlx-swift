@@ -322,10 +322,6 @@ struct WinogradTransforms<6, 3, 8> {
   };
 };
 
-constant constexpr const float WinogradTransforms<6, 3, 8>::wt_transform[8][8];
-constant constexpr const float WinogradTransforms<6, 3, 8>::in_transform[8][8];
-constant constexpr const float WinogradTransforms<6, 3, 8>::out_transform[8][8];
-
 template <typename T, int BC = 32, int BO = 4, int M = 6, int R = 3>
 [[kernel, max_total_threads_per_threadgroup(BO * 32)]] void
 winograd_conv_2d_weight_transform(
